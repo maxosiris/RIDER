@@ -1,270 +1,1226 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RIDER - Coming Soon</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RIDER — Founding Series</title>
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
+<!-- ethers.js loaded FIRST before any scripts that use it -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
 
-        .container {
-            max-width: 600px;
-            width: 100%;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 60px 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-        }
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500&display=swap');
 
-        .logo {
-            font-size: 48px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 20px;
-            letter-spacing: -2px;
-        }
+:root {
+  --bg:    #0e0e0e;
+  --fg:    #e8e4dc;
+  --dim:   #555;
+  --faint: #1c1c1c;
+  --rule:  rgba(255,255,255,0.07);
+  --red:   #d4392a;
+  --gold:  #c9a84c;
+}
 
-        h1 {
-            font-size: 36px;
-            color: #1a202c;
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 
-        .tagline {
-            font-size: 18px;
-            color: #764ba2;
-            margin-bottom: 30px;
-            font-weight: 600;
-        }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'Manrope', sans-serif;
+  font-weight: 300;
+  font-size: 13px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
 
-        .description {
-            font-size: 16px;
-            color: #4a5568;
-            line-height: 1.6;
-            margin-bottom: 40px;
-        }
+/* ── TOP BAR ─────────────────────────────────── */
+.topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--rule);
+}
 
-        .form-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
+.topbar-left {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.topbar-left span { color: var(--fg); }
 
-        .form-group input {
-            flex: 1;
-            padding: 14px 18px;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            font-family: inherit;
-        }
+.topbar-right {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+.topbar-right a {
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--dim);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.topbar-right a:hover { color: var(--fg); }
 
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
+.live-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--red);
+  display: inline-block;
+  margin-right: 6px;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
 
-        .form-group button {
-            padding: 14px 32px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-        }
+/* ── FRAME GRID ──────────────────────────────── */
+.grid-wrap { padding-top: 40px; }
 
-        .form-group button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
+.frame-grid {
+  display: grid;
+  grid-template-columns: repeat(13, 1fr);
+  gap: 0;
+  width: 100%;
+}
 
-        .form-group button:active {
-            transform: translateY(0);
-        }
+.frame-cell {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--faint);
+}
 
-        .features {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-top: 50px;
-            padding-top: 40px;
-            border-top: 2px solid #e2e8f0;
-        }
+.frame-cell img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease, filter 0.4s ease;
+  filter: saturate(0.9);
+}
+.frame-cell:hover img {
+  transform: scale(1.07);
+  filter: saturate(1.35) brightness(1.05);
+}
 
-        .feature {
-            padding: 20px;
-        }
+.frame-cell::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(14,14,14,0.72);
+  opacity: 0;
+  transition: opacity 0.25s;
+  pointer-events: none;
+}
+.frame-cell:hover::after { opacity: 1; }
 
-        .feature-icon {
-            font-size: 32px;
-            margin-bottom: 10px;
-        }
+.frame-info {
+  position: absolute; inset: 0; z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.frame-cell:hover .frame-info { opacity: 1; }
 
-        .feature-title {
-            font-size: 14px;
-            color: #2d3748;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
+.frame-num {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--fg);
+  font-weight: 400;
+}
 
-        .feature-desc {
-            font-size: 12px;
-            color: #718096;
-        }
+.frame-btn {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--bg);
+  background: var(--fg);
+  border: none;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.frame-btn:hover { background: var(--gold); }
 
-        .social-links {
-            margin-top: 30px;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
+.frame-cell.minted img { filter: saturate(0.15) brightness(0.5); }
+.frame-cell.minted .frame-btn { display: none; }
+.frame-cell.minted .frame-num { color: var(--dim); }
 
-        .social-links a {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #f7fafc;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            color: #667eea;
-            transition: all 0.3s ease;
-            font-size: 18px;
-        }
+.frame-cell.f000 {
+  outline: 1px solid var(--red);
+  outline-offset: -1px;
+}
+.frame-cell.f000 .frame-num { color: var(--red); }
+.frame-cell.f000 .frame-btn {
+  background: var(--red); color: var(--fg);
+  cursor: default;
+}
 
-        .social-links a:hover {
-            background: #667eea;
-            color: white;
-            transform: scale(1.1);
-        }
+/* ── TITLE BREAK ─────────────────────────────── */
+.title-break {
+  padding: 80px 24px 60px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 40px;
+  align-items: end;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
 
-        .message {
-            margin-top: 15px;
-            font-size: 14px;
-            color: #48bb78;
-            font-weight: 600;
-            min-height: 20px;
-        }
+.title-main h1 {
+  font-size: clamp(56px, 10vw, 120px);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  line-height: 0.9;
+  color: var(--fg);
+}
+.title-main .sub {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--dim);
+  font-weight: 400;
+  margin-top: 16px;
+}
 
-        @media (max-width: 600px) {
-            .container {
-                padding: 40px 25px;
-            }
+.title-mid p {
+  font-size: 15px;
+  font-weight: 300;
+  color: rgba(232,228,220,0.5);
+  line-height: 1.75;
+  max-width: 320px;
+}
 
-            h1 {
-                font-size: 28px;
-            }
+.title-right { text-align: right; }
+.big-stat {
+  font-size: 64px;
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--fg);
+}
+.big-stat-label {
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-top: 6px;
+}
 
-            .form-group {
-                flex-direction: column;
-            }
+/* ── ABOUT + MATH ────────────────────────────── */
+.about {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--rule);
+}
 
-            .features {
-                grid-template-columns: 1fr;
-            }
+.about-left {
+  padding: 60px 24px;
+  border-right: 1px solid var(--rule);
+}
+.about-right { padding: 60px 24px; }
 
-            .logo {
-                font-size: 40px;
-            }
-        }
-    </style>
+.section-tag {
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.section-tag::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: var(--rule);
+  max-width: 80px;
+}
+
+.about-left p {
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.85;
+  color: rgba(232,228,220,0.65);
+  margin-bottom: 20px;
+  max-width: 480px;
+}
+.about-left p strong { color: var(--fg); font-weight: 400; }
+.about-left p em { color: var(--red); font-style: normal; }
+
+.not-list {
+  margin-top: 32px;
+  border-top: 1px solid var(--rule);
+  padding-top: 24px;
+}
+.not-list-label {
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 16px;
+}
+.not-list ul { list-style: none; }
+.not-list li {
+  font-size: 12px;
+  color: var(--dim);
+  text-decoration: line-through;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--faint);
+  letter-spacing: 0.02em;
+}
+
+.math-block { display: flex; flex-direction: column; }
+.math-row {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 24px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--rule);
+  align-items: baseline;
+}
+.math-num {
+  font-size: 30px;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  line-height: 1;
+}
+.math-num.symbol { font-size: 38px; color: var(--gold); }
+.math-desc { font-size: 12px; color: rgba(232,228,220,0.48); line-height: 1.7; }
+.math-desc strong {
+  color: var(--fg); font-weight: 400;
+  display: block; margin-bottom: 4px; font-size: 13px;
+}
+
+/* ── MINT ────────────────────────────────────── */
+.mint-section {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  border-bottom: 1px solid var(--rule);
+}
+.mint-left {
+  padding: 60px 24px;
+  border-right: 1px solid var(--rule);
+}
+.mint-left h2 {
+  font-size: 36px;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  margin-bottom: 40px;
+  color: var(--fg);
+  line-height: 1.1;
+}
+.perk-list { list-style: none; }
+.perk-list li {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: 13px;
+  color: rgba(232,228,220,0.6);
+  display: flex;
+  gap: 16px;
+  line-height: 1.5;
+}
+.perk-list li::before { content: '—'; color: var(--dim); flex-shrink: 0; }
+
+.mint-right { padding: 60px 24px; }
+
+.price-main {
+  font-size: 72px;
+  font-weight: 300;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--fg);
+}
+.price-eth {
+  font-size: 12px;
+  color: var(--dim);
+  letter-spacing: 0.1em;
+  margin-top: 6px;
+  margin-bottom: 40px;
+}
+
+.counter-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--rule);
+  margin-bottom: 32px;
+}
+.counter-cell {
+  background: var(--bg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.counter-num {
+  font-size: 28px;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  line-height: 1;
+}
+.counter-label {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.prog {
+  height: 1px;
+  background: var(--faint);
+  margin-bottom: 32px;
+  position: relative;
+}
+.prog-fill {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  background: var(--fg);
+  width: 0%;
+  transition: width 1s ease;
+}
+
+.btn-primary {
+  width: 100%;
+  background: var(--fg);
+  color: var(--bg);
+  border: none;
+  padding: 16px 24px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  margin-bottom: 16px;
+  display: block;
+}
+.btn-primary:hover { background: var(--gold); }
+.btn-primary.connected { background: var(--red); color: var(--fg); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.mint-note {
+  font-size: 10px;
+  color: var(--dim);
+  line-height: 1.9;
+  letter-spacing: 0.04em;
+}
+
+/* ── HANS ────────────────────────────────────── */
+.hans-section {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  border-bottom: 1px solid var(--rule);
+}
+.hans-num {
+  padding: 60px 24px;
+  border-right: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+.hans-zero {
+  font-size: 72px;
+  font-weight: 300;
+  letter-spacing: -0.05em;
+  color: var(--red);
+  line-height: 1;
+}
+.hans-label {
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--dim);
+  text-align: center;
+}
+.hans-text { padding: 60px 40px; }
+.hans-text h3 {
+  font-size: 28px;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+  color: var(--fg);
+}
+.hans-text p {
+  font-size: 14px;
+  font-weight: 300;
+  color: rgba(232,228,220,0.55);
+  line-height: 1.85;
+  max-width: 560px;
+  margin-bottom: 16px;
+}
+.hans-link {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--red);
+  text-decoration: none;
+  border-bottom: 1px solid var(--red);
+  padding-bottom: 2px;
+  display: inline-block;
+  margin-top: 8px;
+}
+
+/* ── MUYBRIDGE ───────────────────────────────── */
+.muybridge {
+  border-bottom: 1px solid var(--rule);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 0;
+}
+
+.muybridge-visual {
+  border-right: 1px solid var(--rule);
+  padding: 60px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.muybridge-img {
+  width: 100%;
+  display: block;
+  filter: grayscale(1) contrast(1.1) brightness(0.8);
+  opacity: 0.65;
+}
+
+.muybridge-credit {
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--dim);
+  opacity: 0.6;
+}
+
+.muybridge-text { padding: 60px 40px; }
+
+.muybridge-date {
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.muybridge-date::before {
+  content: '';
+  width: 24px; height: 1px;
+  background: var(--dim);
+  flex-shrink: 0;
+}
+
+.muybridge-text h3 {
+  font-size: 26px;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: var(--fg);
+  margin-bottom: 24px;
+}
+
+.muybridge-text p {
+  font-size: 13px;
+  font-weight: 300;
+  color: rgba(232,228,220,0.5);
+  line-height: 1.85;
+  max-width: 440px;
+  margin-bottom: 16px;
+}
+.muybridge-text p em { color: rgba(232,228,220,0.75); font-style: normal; }
+
+.lineage {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0;
+}
+.lineage-item {
+  display: flex;
+  align-items: center;
+}
+.lineage-year {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--dim);
+  white-space: nowrap;
+}
+.lineage-sep {
+  color: var(--faint);
+  padding: 0 8px;
+  font-size: 12px;
+}
+.lineage-item:last-child .lineage-year { color: var(--fg); }
+
+/* ── LIGHTBOX ────────────────────────────────── */
+.lightbox {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(14,14,14,0.96);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.lightbox.open { opacity: 1; pointer-events: all; }
+
+.lightbox-inner {
+  display: grid;
+  grid-template-columns: auto 300px;
+  gap: 48px;
+  align-items: center;
+  max-width: 860px;
+  width: 90vw;
+  padding: 24px;
+}
+
+.lightbox-img {
+  max-height: 70vh;
+  max-width: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.lb-frame {
+  font-size: 56px;
+  font-weight: 300;
+  letter-spacing: -0.04em;
+  color: var(--fg);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.lb-sub {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 32px;
+}
+.lb-price {
+  font-size: 28px;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.lb-eth {
+  font-size: 11px;
+  color: var(--dim);
+  letter-spacing: 0.1em;
+  margin-bottom: 24px;
+}
+.lb-perks { list-style: none; margin-bottom: 28px; border-top: 1px solid var(--rule); }
+.lb-perks li {
+  padding: 9px 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: 11px;
+  color: rgba(232,228,220,0.5);
+  display: flex; gap: 10px;
+}
+.lb-perks li::before { content: '—'; color: var(--dim); flex-shrink: 0; }
+
+.lb-close {
+  position: absolute;
+  top: 20px; right: 24px;
+  background: none; border: none;
+  color: var(--dim);
+  font-size: 28px;
+  cursor: pointer;
+  font-weight: 300;
+  line-height: 1;
+  transition: color 0.2s;
+  font-family: 'Manrope', sans-serif;
+}
+.lb-close:hover { color: var(--fg); }
+
+/* ── FOOTER ──────────────────────────────────── */
+footer {
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+footer a { color: var(--dim); text-decoration: none; transition: color 0.2s; }
+footer a:hover { color: var(--fg); }
+
+/* ── RESPONSIVE ──────────────────────────────── */
+@media (max-width: 900px) {
+  .frame-grid { grid-template-columns: repeat(8, 1fr); }
+  .title-break, .about, .mint-section, .hans-section, .muybridge {
+    grid-template-columns: 1fr;
+  }
+  .title-break { padding: 48px 16px; gap: 24px; }
+  .about-left { border-right: none; border-bottom: 1px solid var(--rule); }
+  .about-left, .about-right, .mint-left, .mint-right,
+  .hans-text, .muybridge-text, .muybridge-visual { padding: 40px 16px; }
+  .mint-left { border-right: none; }
+  .hans-num { border-right: none; border-bottom: 1px solid var(--rule);
+    flex-direction: row; justify-content: flex-start; padding: 32px 16px; }
+  .muybridge-visual { border-right: none; border-bottom: 1px solid var(--rule); }
+  .lightbox-inner { grid-template-columns: 1fr; overflow-y: auto; max-height: 92vh; }
+  .lightbox-img { max-height: 45vh; }
+  .topbar-right { display: none; }
+  footer { flex-direction: column; gap: 12px; text-align: center; }
+}
+@media (max-width: 500px) {
+  .frame-grid { grid-template-columns: repeat(5, 1fr); }
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">🚴 RIDER</div>
-        <h1>Coming Soon</h1>
-        <div class="tagline">Something Exciting is On the Way</div>
-        
-        <p class="description">
-            We're working on something revolutionary. Get notified the moment we launch.
-        </p>
 
-        <form id="emailForm" onsubmit="handleSubmit(event)">
-            <div class="form-group">
-                <input 
-                    type="email" 
-                    placeholder="Enter your email address" 
-                    required
-                    id="emailInput"
-                >
-                <button type="submit">Notify Me</button>
-            </div>
-        </form>
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-left">RIDER — <span>Founding Series</span> — 125 Frames</div>
+  <div class="topbar-right">
+    <span><span class="live-dot"></span><span id="tb-remain">125</span> remaining</span>
+    <a href="#mint">Acquire</a>
+    <a href="https://superrare.com/artwork/eth/0xb932a70A57673d89f4acfFBE830E8ed7f75Fb9e0/51715" target="_blank">Original</a>
+  </div>
+</div>
 
-        <div class="message" id="message"></div>
+<!-- FRAME GRID -->
+<div class="grid-wrap">
+  <div class="frame-grid" id="frame-grid"></div>
+</div>
 
-        <div class="features">
-            <div class="feature">
-                <div class="feature-icon">⚡</div>
-                <div class="feature-title">Lightning Fast</div>
-                <div class="feature-desc">Experience speed like never before</div>
-            </div>
-            <div class="feature">
-                <div class="feature-icon">🎯</div>
-                <div class="feature-title">Precision Focused</div>
-                <div class="feature-desc">Built with purpose and clarity</div>
-            </div>
-            <div class="feature">
-                <div class="feature-icon">🔐</div>
-                <div class="feature-title">Secure & Reliable</div>
-                <div class="feature-desc">Your trust is our priority</div>
-            </div>
-            <div class="feature">
-                <div class="feature-icon">🚀</div>
-                <div class="feature-title">Next Generation</div>
-                <div class="feature-desc">Innovation at its finest</div>
-            </div>
-        </div>
+<!-- TITLE BREAK -->
+<div class="title-break">
+  <div class="title-main">
+    <h1>RIDER</h1>
+    <span class="sub">Founding Series · The Integral · ETH</span>
+  </div>
+  <div class="title-mid">
+    <p>125 frames. Each one a unique token. Each one 1/125th of the original work. The whole ride, held together.</p>
+  </div>
+  <div class="title-right">
+    <div class="big-stat" id="stat-remain">125</div>
+    <div class="big-stat-label">Frames remaining</div>
+  </div>
+</div>
 
-        <div class="social-links">
-            <a href="#" title="Twitter" aria-label="Follow on Twitter">𝕏</a>
-            <a href="#" title="GitHub" aria-label="Follow on GitHub">⚙️</a>
-            <a href="#" title="LinkedIn" aria-label="Follow on LinkedIn">💼</a>
-        </div>
+<!-- ABOUT + MATH -->
+<div class="about">
+  <div class="about-left">
+    <div class="section-tag">On the Work</div>
+    <p>There is a type of person in this space who arrives loud, leaves fast, and calls it a community. They pump. They shill. They ghost.</p>
+    <p><em>RIDER is not for them.</em></p>
+    <p>A rider shows up, holds on, moves with the people around them. The journey only exists because everyone stayed in it together. <strong>This is not a metaphor. This is the mechanic.</strong></p>
+    <p>When the token launches it will be claimable, not airdropped. You pay the gas. We pay attention to who shows up. The bots don't qualify. The flippers probably won't bother. The riders will.</p>
+    <div class="not-list">
+      <div class="not-list-label">What this is not</div>
+      <ul>
+        <li>No coordinated pump or artificial launch mechanics</li>
+        <li>No team allocation disguised as community rewards</li>
+        <li>No influencer deal or paid promotion</li>
+        <li>No whitelist for people who already have enough</li>
+        <li>No artificial scarcity — 125 is literal, not theatrical</li>
+      </ul>
     </div>
+  </div>
+  <div class="about-right">
+    <div class="section-tag">The Mathematics</div>
+    <div class="math-block">
+      <div class="math-row">
+        <div class="math-num symbol">∫</div>
+        <div class="math-desc">
+          <strong>The Integral</strong>
+          From summa — sum. Each frame is a slice. The community is the integral. Together, 125 slices reconstitute the whole ride.
+        </div>
+      </div>
+      <div class="math-row">
+        <div class="math-num">5³</div>
+        <div class="math-desc">
+          <strong>The Cube</strong>
+          125 is a perfect cube. Three-dimensional. Artist, collector, rider. A structure you can stand inside, not a line chart.
+        </div>
+      </div>
+      <div class="math-row">
+        <div class="math-num">1/125</div>
+        <div class="math-desc">
+          <strong>Your Fraction</strong>
+          Each token is exactly one frame of the original GIF. The token metadata references the specific frame. The math is the art.
+        </div>
+      </div>
+      <div class="math-row">
+        <div class="math-num">000</div>
+        <div class="math-desc">
+          <strong>Frame 000 — Hans Heiner Buhr</strong>
+          Before the 125 there is one. Hans collected Rider before this had a name. He is Frame 000. Outside the series. Before the integral.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-    <script>
-        function handleSubmit(event) {
-            event.preventDefault();
-            const email = document.getElementById('emailInput').value;
-            const messageEl = document.getElementById('message');
-            
-            // Simulate form submission
-            messageEl.textContent = '✓ Thanks! Check your email for updates.';
-            document.getElementById('emailForm').reset();
-            
-            // Clear message after 3 seconds
-            setTimeout(() => {
-                messageEl.textContent = '';
-            }, 4000);
-        }
-    </script>
+<!-- MINT -->
+<div class="mint-section" id="mint">
+  <div class="mint-left">
+    <div class="section-tag">Acquire a Frame</div>
+    <h2>Join the series.<br>Hold the ride.</h2>
+    <ul class="perk-list">
+      <li>Unique numbered Frame NFT — your specific frame of the original Rider GIF, on-chain permanently</li>
+      <li>Guaranteed $RIDER token allocation at Phase 2 launch — fixed rate, no speculation</li>
+      <li>RIDER Telegram — wallet-gated via Guild.xyz, verified Frame holders only, no bots</li>
+      <li>Founding Rider status — all future drops, events and merch, first access always</li>
+      <li>Permanent entry in the on-chain Co-Rider Registry alongside Hans as Frame 000</li>
+    </ul>
+  </div>
+  <div class="mint-right">
+    <div class="price-main">$125</div>
+    <div class="price-eth">≈ 0.033 ETH &nbsp;·&nbsp; plus gas &nbsp;·&nbsp; 1 per wallet</div>
+    <div class="counter-row">
+      <div class="counter-cell">
+        <div class="counter-num" id="mc-minted">0</div>
+        <div class="counter-label">Minted</div>
+      </div>
+      <div class="counter-cell">
+        <div class="counter-num" id="mc-remain">125</div>
+        <div class="counter-label">Remaining</div>
+      </div>
+    </div>
+    <div class="prog"><div class="prog-fill" id="prog-fill"></div></div>
+    <button class="btn-primary" id="main-mint-btn">
+      <span id="main-mint-txt">Connect Wallet</span>
+    </button>
+    <div class="mint-note">
+      Contract address published at deploy.<br>
+      Verify on Etherscan before minting.<br>
+      One frame per wallet. This does not reopen.
+    </div>
+  </div>
+</div>
+
+<!-- HANS -->
+<div class="hans-section">
+  <div class="hans-num">
+    <div class="hans-zero">000</div>
+    <div class="hans-label">Frame Zero<br>Co-Rider</div>
+  </div>
+  <div class="hans-text">
+    <h3>Hans Heiner Buhr</h3>
+    <p>Before this had a name, before the series existed, Hans collected Rider. Not a roadmap. Not a thesis. The work itself — because it moved him. That is the oldest form of support there is.</p>
+    <p>Painter. Poet. Adventurer. Cryptoartist across SuperRare, Foundation, Bitcoin Ordinals. He had a piece called Blue Crypto Riders before RIDER was a thought. The rider thread runs through both of us.</p>
+    <a href="https://www.hansheinerbuhr.com/cryptoart/" target="_blank" class="hans-link">View Hans's work →</a>
+  </div>
+</div>
+
+<!-- MUYBRIDGE -->
+<div class="muybridge">
+  <div class="muybridge-visual">
+    <img
+      class="muybridge-img"
+      src="https://upload.wikimedia.org/wikipedia/commons/7/73/The_Horse_in_Motion.jpg"
+      alt="The Horse in Motion — Eadweard Muybridge, 1878"
+      loading="lazy"
+    >
+    <div class="muybridge-credit">Eadweard Muybridge — The Horse in Motion, 1878 — Public Domain</div>
+  </div>
+  <div class="muybridge-text">
+    <div class="muybridge-date">Palo Alto, California — 1878</div>
+    <h3>The first sequence.<br>12 frames.<br>Every frame since.</h3>
+    <p>Eadweard Muybridge set 12 cameras along a racetrack and triggered them in sequence to capture a horse at full gallop. It was the first time continuous motion had ever been broken into discrete frames — and the first time those frames, played back, created the illusion of life.</p>
+    <p><em>Everything that moves on a screen descends from those 12 photographs.</em> The film. The animation. The GIF. RIDER is 125 frames of a horse and rider, made 145 years later, in direct conversation with that original sequence. The motion is the same. The medium is different. The math is identical.</p>
+    <div class="lineage">
+      <div class="lineage-item"><span class="lineage-year">1878 — Muybridge</span><span class="lineage-sep">→</span></div>
+      <div class="lineage-item"><span class="lineage-year">1895 — Cinema</span><span class="lineage-sep">→</span></div>
+      <div class="lineage-item"><span class="lineage-year">1987 — GIF</span><span class="lineage-sep">→</span></div>
+      <div class="lineage-item"><span class="lineage-year">2014 — CryptoArt</span><span class="lineage-sep">→</span></div>
+      <div class="lineage-item"><span class="lineage-year">Now — RIDER</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>RIDER — Founding Series — osiris</div>
+  <div>
+    <a href="https://superrare.com/artwork/eth/0xb932a70A57673d89f4acfFBE830E8ed7f75Fb9e0/51715" target="_blank">Original Work</a>
+    &nbsp;&nbsp;
+    <a href="https://www.hansheinerbuhr.com/cryptoart/" target="_blank">Frame 000: Hans</a>
+  </div>
+  <div>Built on ETH &nbsp;·&nbsp; Held Together</div>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" id="lb-close">×</button>
+  <div class="lightbox-inner">
+    <img class="lightbox-img" id="lb-img" src="" alt="">
+    <div class="lightbox-info">
+      <div class="lb-frame" id="lb-frame">001</div>
+      <div class="lb-sub">RIDER — Founding Series</div>
+      <div class="lb-price">$125</div>
+      <div class="lb-eth">≈ 0.033 ETH + gas</div>
+      <ul class="lb-perks">
+        <li>Unique Frame NFT on-chain</li>
+        <li>$RIDER token allocation — Phase 2</li>
+        <li>Wallet-gated Telegram access</li>
+        <li>Founding Rider — all future drops</li>
+      </ul>
+      <button class="btn-primary" id="lb-mint-btn">Mint This Frame</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ───────────────────────────────────────────
+const CONTRACT_ADDRESS = '';     // paste deployed contract address here
+const MINT_PRICE_ETH   = '0.033';
+const TOTAL            = 125;
+
+// Permanent Arweave URLs — one per frame, immutable forever
+const FRAME_URLS = {
+  1: 'https://ardrive.net/XmxSVM5c0OgKMMAn9COhwpTKDNsrA89YfHytKtzj0AA',
+  2: 'https://ardrive.net/Q_rQyDV_9yygPHmzvNO4R1IEksGA8CiPhCYKp_1FVMs',
+  3: 'https://ardrive.net/3hjcEOas88Djg1hvWpx3ik0W5YE1vZ13GI8hgr1dMYE',
+  4: 'https://ardrive.net/JxzdBItBY10LRwxP_ORRmIRZPR6fmAaGtAhKsxKUU98',
+  5: 'https://ardrive.net/20SnBsv1HEq6mCxJBq9Pz484IZPGuEMdxb7GqfcBsCA',
+  6: 'https://ardrive.net/1wED01wYpBWk84HlbJ-pfFQGSdt7jl0p-ILAlg2_H8Y',
+  7: 'https://ardrive.net/999WdnzIjp-k27UxkVoWafQc9uxlYV0GQyQ2KIu5zE8',
+  8: 'https://ardrive.net/pr0xVrJvA2dySQu7-XM8IXNWCxMwuvpcsR9W5qZqWIc',
+  9: 'https://ardrive.net/ibQE5GpAp-5oNFe2pd24zzUZ3A_t-F64UImj6kmc_mk',
+  10: 'https://ardrive.net/FB3k4yk40vQ8FsyBaia8erjRHjrsa_TUKYHWFFphdbE',
+  11: 'https://ardrive.net/Iz7IvFY09cSnGSHPVfMy-nat7fVjFjjsmqpXx54G8zU',
+  12: 'https://ardrive.net/Rc802gG8FRBjBSjziSs8o5J_Px54HSHyDpJE8sMN0iw',
+  13: 'https://ardrive.net/CQdLEolyxv00IeEaRJVZCzkl-UpszrVmDfyfwXiRmWA',
+  14: 'https://ardrive.net/9MAoQc3bdFGGpdZz47WsHBg2U8JPevd6l6wBKZzUppQ',
+  15: 'https://ardrive.net/kFsjlnQHFvwgt0i_O57NMnrstTGGuqmZXQF_UoKubM0',
+  16: 'https://ardrive.net/FDcQg6jOBBxTPzqg-hmVV6O7l2mmOHcpuMxJ96j2i7k',
+  17: 'https://ardrive.net/eqkvqchMjBQ32I7qhP35HkM6SFNksqQdEKtpVi0jMKI',
+  18: 'https://ardrive.net/rNwaZkZf608gHMQA1NG4Y7sFiUbLkh4bNSqOtLAyszI',
+  19: 'https://ardrive.net/1SzCt0h8l64YpqFuCEaK0Mldyt_ej7RmV_Is447jUcs',
+  20: 'https://ardrive.net/m5CDsbqz38vay-wMXo0HT8FYlvtI2LP5SYdVSAYVDzE',
+  21: 'https://ardrive.net/wLlcf_xKuTkb0f0oKFqr7NUGSlM718XodqMSwEXMS9A',
+  22: 'https://ardrive.net/3pDqs4APUTCEeKgix1Ory4sSQfEhmwEg06NO3oI2QjU',
+  23: 'https://ardrive.net/kSPNtXj3jb8th-dEbezUSnpCQdcGxH9gj4j7pkxtxwM',
+  24: 'https://ardrive.net/AvGSmH0bt2aedU2ajDGavQiR6m5P_9Pd_XuSULPEXu4',
+  25: 'https://ardrive.net/wDYmFrHG8-oHzbx1p7ZB6fuKqqJwPWRKDQG0DtBX82E',
+  26: 'https://ardrive.net/UjZz5EosCk2Z6_FCQNcWS50PwFJ7p4px_oIPBNSgphA',
+  27: 'https://ardrive.net/OSEG6fEsSR1T5lg-7Nl8buetVpv8FyZCC_8cKflWa7E',
+  28: 'https://ardrive.net/CsxdmMzqRLv1UXEhp67q-ncqM4AYY8HyTsGDDA4McgU',
+  29: 'https://ardrive.net/Sp1rPL0YSGt7IfhvlH-3oDlu4-BnpS9Y3VustZiQJFs',
+  30: 'https://ardrive.net/AHPN4b2Ix6DHEboW3O7LBgq1bB1AqGglGaeAqcnzahg',
+  31: 'https://ardrive.net/D4qtRdMe2mXiJtEOF29vBhXYhl5PBzYGFRUKbBiu6ew',
+  32: 'https://ardrive.net/DGqByXhwIY_2r7fMvyHHqoNnMnfzwUksvdh96Iyn2Sg',
+  33: 'https://ardrive.net/5TCm-RAW5pHZSG6zXylznvXedo_QiqPdZfBHLMVy6jM',
+  34: 'https://ardrive.net/TzndcpzBxI2GLne8DE1vE0ucvDheAgTHXrxowkX6aJI',
+  35: 'https://ardrive.net/UodHXJrXuLPu-KOoN_sl-kpXNsTlUi9WQ_YAyYk9FF4',
+  36: 'https://ardrive.net/8dvmeX1mBnQZldUo-grIm2n7DCykUHWL33xakg7jfZ0',
+  37: 'https://ardrive.net/NI3fgdP7fqj6tyQD-g5uvw3lDHQtExRfoP65dRAJXug',
+  38: 'https://ardrive.net/a-_SX75yvlMdZQY6NJDP-V0hjKzKY8Db4PJSrXz_DpM',
+  39: 'https://ardrive.net/71GM3E8y59ZxrD2BBg5Uluk3qUskFH8R5uDMDJCdjBY',
+  40: 'https://ardrive.net/bvEiudmbNwBDEMcRVp1Xa-Kw1iIQZvRWcymGENFxJtU',
+  41: 'https://ardrive.net/SGia7ujmNBsj_XSfWBp0sU-BXJ8t7EbppdlhvTnsihU',
+  42: 'https://ardrive.net/cg6Dp4_njX_qQU4Doar8pzfUmv7gpHkgd2yMNw_YDBo',
+  43: 'https://ardrive.net/AGcz7g53s1L5pSKZhN0AyUGLhysxXhzKVZGR9BW7tPQ',
+  44: 'https://ardrive.net/aYic8Zzkc_fowwPte35UjviHNKQ7czxC65-R4Jd1CGs',
+  45: 'https://ardrive.net/MqWDT2Pu3seuXaeJWG61SAEuxRO8-QMN3CM7RVkbTeY',
+  46: 'https://ardrive.net/jxkKJstOD8p-Bqe6bj1PSRjq1fAwX5pPdN_New5hTX4',
+  47: 'https://ardrive.net/-COy-p3Slvobad6gK4pMO66B35ieDjdGnle7MBYURKM',
+  48: 'https://ardrive.net/yTso1WzXed_o62p9KbTxerWb47JjvBXUJYc_ooO24g0',
+  49: 'https://ardrive.net/LN0loUsbOWkzBcR4Bge7G6IgDpZbFb2omJj232yjSNU',
+  50: 'https://ardrive.net/avmCS3QHoq7nEEq-xaweVCeEGehgu7EyIysKhIqiTqI',
+  51: 'https://ardrive.net/ImUwcOE0NrhtMDJwmDFJWJqYSrbYImBGwaN-u6Kcby8',
+  52: 'https://ardrive.net/7h6KBmc2Njdhc8vdx5Gba9KLCyTv5DUHNLCHBFlIMOw',
+  53: 'https://ardrive.net/Kg2OWkpP4LXETebcZjo_j47uAaqtwqsV4c0IlYcV1Dw',
+  54: 'https://ardrive.net/BsHmcmdw9P-c3NKZjzzdOhIH6RqvcxKYXHHZjxgWe_A',
+  55: 'https://ardrive.net/TxFOXxuupduAI8hfeoMOPC67MGnWc58a0WuASB4dD4c',
+  56: 'https://ardrive.net/8NVhejzLeVVcOgNVGSdPYMAVByQ7Nx4cQ2A_FdXOYE8',
+  57: 'https://ardrive.net/GgafKto2Nb9UFOhtrm1gtHYFDvSBOI_LfcedNGNHpAo',
+  58: 'https://ardrive.net/qXsyF3yUcRLtelW4srVRMUH6sPemRBFiA159Z5I3b8g',
+  59: 'https://ardrive.net/zfQbGTwIpIg1rOdeVJjymLXg3K6VM52wJMMvl_uGVR8',
+  60: 'https://ardrive.net/G0iXSceueZvN9ZzvY4weTfBNg_RX9z8CyMAhUBkl7Bg',
+  61: 'https://ardrive.net/1i0U-BQPrQjJOlOAb9BaaWGyv4scRC0Exy5OWool2K0',
+  62: 'https://ardrive.net/hKDnSiL5a_bFE-nrJ-JlzJIj7FAdhkwvn42F0MhbxLo',
+  63: 'https://ardrive.net/y--p3qUAb5am-802-clbNL-AwEE2HFEbSax0wiSNBHk',
+  64: 'https://ardrive.net/E7J0sHYkuPprcF0YlIF9p3caz5pGiEoFMmQdWJHfWG0',
+  65: 'https://ardrive.net/gCXz9-cFb8xfYtgiyFPLMKGWMUaks3cNDYcvj4NHLX0',
+  66: 'https://ardrive.net/nNqZwUNLCKflhFFdTdNd63EVIshbAZXvd7vk4ldPkIc',
+  67: 'https://ardrive.net/EUEmgPZ35g8TzP-_tX9iW7Sl3xdO2e_p2Sf8Nr-_Rys',
+  68: 'https://ardrive.net/xABH9yTKeduPEMj1IQNfhMDoWDnkTjAMT7of3ZOVENc',
+  69: 'https://ardrive.net/Add3uZBEADS_nWLgHU4BjxkCtx1SHUw8B1X8bfj1a6w',
+  70: 'https://ardrive.net/TQx_a45ldW6O_m5SI6DlyGwcYoXWd0t34_PdisW2qac',
+  71: 'https://ardrive.net/McOnti-cxsMpV0WBq0ZgYTUgTmqHGRi1N3Bx3ccUFxk',
+  72: 'https://ardrive.net/A-DgwxFX7tVidLMXE7JeNmT6WRMgfmP9n8n4b9oHaO4',
+  73: 'https://ardrive.net/wfpnFduR3wzJeG5x-KqnIzwLekReTKWIWj_CgcyalP8',
+  74: 'https://ardrive.net/fF-W1tYb6BVBMu9XO7fwOfHYvGcpRirwRccVCDTxUBw',
+  75: 'https://ardrive.net/ng-K7nSL1Ym94wTFhcKup3_J-q21pxMx4i7RhVfcjm8',
+  76: 'https://ardrive.net/0Of4lqEZLNpe0XVGD9uP-Zqt1bEZwGigUoev-VWGnpM',
+  77: 'https://ardrive.net/YBkuTiSOtAtCS7WyG6zdQTYWaox6KSALh-yenXGUN_w',
+  78: 'https://ardrive.net/xH-auwL0tWsKqWprxhhKHKcX7_nE3iTWP5dEud_qK9g',
+  79: 'https://ardrive.net/nWO6Y5pZALTM22Md6FMfthIq3O1lILm7szNFN9nUgZ4',
+  80: 'https://ardrive.net/7-ZLFw6-Y-cFMQU4b3C580WnX8qENKNoFRdxnTWkQEM',
+  81: 'https://ardrive.net/K-G_Lltni2QckFj4wjfi_5Fi7dweXZhS9MtRZq28lwo',
+  82: 'https://ardrive.net/dXrawzFIFw7gIkAAWQUSilmnbmrJyGhZ8GNKh1DMCJU',
+  83: 'https://ardrive.net/gUjW7Ntzxe2eRNOoMPf6mcb1fgD43s70bpoMC_tSmuA',
+  84: 'https://ardrive.net/voK90QFADQKnmUuxbSdXq4XHi80vROzTET0AEQpIhWM',
+  85: 'https://ardrive.net/_wP3jeO8Mqlg311dTwUvAV7hX2CipoG2rSj0L6UZF-I',
+  86: 'https://ardrive.net/QEclb7F6McIvyG6YX80bY62SP8rw5BGYwrv4fBLahb8',
+  87: 'https://ardrive.net/a02bEWqD2uFrVQ2xuQVg8cK826jXtnFlRCVrtFw2z_E',
+  88: 'https://ardrive.net/VTVWpFzhyVupKalujrQ9DaxdeYZ005V2O7uJ0UoWfKU',
+  89: 'https://ardrive.net/r0XeFNvB4gVZXa-j6EhCOWdYvHPn7D1pmgOB0bGDZfk',
+  90: 'https://ardrive.net/3yd7eSvuZ5DSGjUXbsr5DysIqmb2Ud_Mb7H8_9RpbpQ',
+  91: 'https://ardrive.net/pI_lK2BGTg4EP0zrWVfFvDJYyJ3sgrVcuLWFn0Bzdqo',
+  92: 'https://ardrive.net/2JSqn4dhekYWSypRJ_sRQh9dFmddREovHtI98MYM8nU',
+  93: 'https://ardrive.net/mP2Ubku1RWYfeOqypXa0PQ9bt-jwpxfb6OFY3RbGDLM',
+  94: 'https://ardrive.net/jCRp4W_C_3Cd90BTIWWjQYFUNDZ0MRMxYswRDcfsNTU',
+  95: 'https://ardrive.net/mdPcuzvsYc2pinrNTSAtnjP5S5t0bnA9pkweNIre4r4',
+  96: 'https://ardrive.net/A4qWlX8fuAB4bnA9BSvaJCHX6sO71PTNzY6O0NmnR6A',
+  97: 'https://ardrive.net/09J2ID82VYuCElUs-MqDLokd0BFRmJyCl1WROe50m7A',
+  98: 'https://ardrive.net/T5JPTnRWZ6CMQD5zc9550RuZFhvfeBtevyQJMSr4Rg8',
+  99: 'https://ardrive.net/gTpa-OleXOKGakjLlAg49FpfVt-n2322DpoVm5YqX6A',
+  100: 'https://ardrive.net/M_mlNdqiA_VydencAzhzk4fMHB4xv8h5Aoawtp-KqS0',
+  101: 'https://ardrive.net/b_TEenbRD6yjd7YgeEGjQJAqFzOlKJvPNl9jRNW70Yw',
+  102: 'https://ardrive.net/8UTHWQfKKd-FsZEeeJZbXks_48W5WJRSen_ZxhyfW_c',
+  103: 'https://ardrive.net/i87qGmtX5qle3NiIPcmzv337m-Y0iEfjwRNFjYkz3q0',
+  104: 'https://ardrive.net/8luxrT1ymsJQDj9BhAsaoUa3e-fqNozpxouKdkluvI0',
+  105: 'https://ardrive.net/G6OhPWlIO2m9Bw0KTqB2YR7frFiVenQCcO-33U6m5JQ',
+  106: 'https://ardrive.net/mSfA_YdkEHedgtm6PTc0jWr0giI3anliAoPLjJkttyQ',
+  107: 'https://ardrive.net/VOuCJk7am3_8p6GUo-VKs09fikM3gBESD35UrGtyF7s',
+  108: 'https://ardrive.net/JTgJRUgaCtivhiBnPmrAxPTGjKtmXmVlN6erDHBSVIQ',
+  109: 'https://ardrive.net/kkXJ-PPwIYD2qED4E5Y1C6MzTj0qzmcTEmJEDUVC74Q',
+  110: 'https://ardrive.net/Q9rWrgsvZkEmUjFuNw7U_wiGlul1UHkYXfER8hmzzLc',
+  111: 'https://ardrive.net/m3Wh0vqnT8Vik__KS0ugsKtZLSifWX5pCEyI2NqnsIU',
+  112: 'https://ardrive.net/C5yGzx2k1M1GrV80teMhBQe81s5UfyMbpvla4nkTRYU',
+  113: 'https://ardrive.net/YtsimrOgikDZGz9wolfTWLFSkdYk_1Ov_jIatgfXdY0',
+  114: 'https://ardrive.net/NBPe-R77BPhF7qCDStMc_6JFxw8AJ9Sf_QSNpCrDMxw',
+  115: 'https://ardrive.net/EQ2ywzUVE9c8oOU14WuBpbbPfbU2PF8fcX_6GkAbPbU',
+  116: 'https://ardrive.net/PA50sevfkxg5VFQhOeYA12lNo6MKQf0HDFEFQYKRDYY',
+  117: 'https://ardrive.net/44Jt2w_xVysV6u1YWWb-dIDR56Oni5WSyeXN_9uii-c',
+  118: 'https://ardrive.net/kT9lKc86591QsE_l-_0yx5GdHVqp0QsE37ioT70m-zA',
+  119: 'https://ardrive.net/BNN8E13y0hSpdgMCnne3GsVpFOBCSo0U9I5-7Jy9gGE',
+  120: 'https://ardrive.net/j6sgtt6cSPHv1ZwPrHZsyivLVGHRsWvYr52tU7KagBg',
+  121: 'https://ardrive.net/dqo_eC6vop1viaLyvQWpA3xFUWvSYQfLzKd05V5t9Fs',
+  122: 'https://ardrive.net/LuLvTNJHQdEMRR9BYyinWtc0Kh8MH3GiU67N9a9y8PE',
+  123: 'https://ardrive.net/WqIpWdZwU8KlhynoACErdbxai32sbISg12YUxRfdWds',
+  124: 'https://ardrive.net/smbwSsokdJKUZiEVViF0AZgCG9e9XVHzEA0CDEV1IPQ',
+  125: 'https://ardrive.net/zRG0QR5rsia2xhoLpD_Zm6BWrXksuSQAvdscIZVEY34'
+};
+
+const ABI = [
+  'function mint() payable',
+  'function totalSupply() view returns (uint256)',
+  'function balanceOf(address owner) view returns (uint256)'
+];
+
+// Tracks minted token IDs — populated from contract on connect
+const mintedSet = new Set();
+
+// ── STATE ────────────────────────────────────────────
+let walletConnected = false;
+let userAddress     = null;
+let provider        = null;
+let signer          = null;
+let contract        = null;
+
+// ── BUILD GRID ───────────────────────────────────────
+const grid = document.getElementById('frame-grid');
+
+// Frame 000 first
+grid.appendChild(makeCell(0));
+for (let i = 1; i <= TOTAL; i++) grid.appendChild(makeCell(i));
+
+function makeCell(i) {
+  const isMinted = mintedSet.has(i);
+  const isHans   = i === 0;
+
+  const cell = document.createElement('div');
+  cell.className = 'frame-cell'
+    + (isHans   ? ' f000'   : '')
+    + (isMinted ? ' minted' : '');
+
+  const img = document.createElement('img');
+  img.src         = isHans ? FRAME_URLS[1] : FRAME_URLS[i];
+  img.alt         = isHans ? 'Frame 000 — Hans' : `Frame ${pad(i)}`;
+  img.loading     = 'lazy';
+  img.crossOrigin = 'anonymous';
+  img.onerror     = function() {
+    // If ardrive.net fails, try arweave.net directly
+    const arweaveTx = this.src.replace('https://ardrive.net/', 'https://arweave.net/');
+    if (!this.src.includes('arweave.net')) {
+      this.src = arweaveTx;
+    }
+  };
+
+  const info = document.createElement('div');
+  info.className = 'frame-info';
+
+  const num = document.createElement('div');
+  num.className   = 'frame-num';
+  num.textContent = isHans ? 'FRAME 000 — HANS' : `FRAME ${pad(i)}`;
+
+  const btn = document.createElement('button');
+  btn.className   = 'frame-btn';
+  btn.textContent = isHans ? 'Reserved' : (isMinted ? 'Held' : 'View');
+
+  info.appendChild(num);
+  info.appendChild(btn);
+  cell.appendChild(img);
+  cell.appendChild(info);
+
+  if (!isHans && !isMinted) {
+    const open = () => openLightbox(i);
+    btn.addEventListener('click', e => { e.stopPropagation(); open(); });
+    cell.addEventListener('click', open);
+  }
+
+  return cell;
+}
+
+function pad(n) { return String(n).padStart(3, '0'); }
+
+// ── COUNTERS ─────────────────────────────────────────
+function updateCounters() {
+  const minted = mintedSet.size;
+  const remain = TOTAL - minted;
+  document.getElementById('tb-remain').textContent    = remain;
+  document.getElementById('stat-remain').textContent  = remain;
+  document.getElementById('mc-minted').textContent    = minted;
+  document.getElementById('mc-remain').textContent    = remain;
+  document.getElementById('prog-fill').style.width    = (minted / TOTAL * 100) + '%';
+}
+updateCounters();
+
+// ── LIGHTBOX ─────────────────────────────────────────
+const lightbox = document.getElementById('lightbox');
+const lbImg    = document.getElementById('lb-img');
+const lbFrame  = document.getElementById('lb-frame');
+
+function openLightbox(i) {
+  lbImg.src         = FRAME_URLS[i];
+  lbImg.crossOrigin = 'anonymous';
+  lbImg.onerror     = function() {
+    const arweaveTx = this.src.replace('https://ardrive.net/', 'https://arweave.net/');
+    if (!this.src.includes('arweave.net')) this.src = arweaveTx;
+  };
+  lbFrame.textContent    = `Frame ${pad(i)}`;
+  lightbox.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  lightbox.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('lb-close').addEventListener('click', closeLightbox);
+lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+// ── WALLET CONNECT ───────────────────────────────────
+async function connectWallet() {
+  if (typeof window.ethereum === 'undefined') {
+    alert('Please install MetaMask to mint.');
+    return false;
+  }
+  try {
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    userAddress      = accounts[0];
+    provider         = new ethers.BrowserProvider(window.ethereum);
+    signer           = await provider.getSigner();
+    walletConnected  = true;
+
+    if (CONTRACT_ADDRESS) {
+      contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+      const supply = await contract.totalSupply();
+      mintedSet.clear();
+      for (let i = 1; i <= Number(supply); i++) mintedSet.add(i);
+      updateCounters();
+    }
+    return true;
+  } catch (e) {
+    console.error('Wallet connect failed:', e);
+    return false;
+  }
+}
+
+// ── MINT ─────────────────────────────────────────────
+async function mintFrame(btnEl, txtEl) {
+  if (!walletConnected) {
+    const ok = await connectWallet();
+    if (!ok) return;
+    txtEl.textContent = 'Mint Your Frame';
+    btnEl.classList.add('connected');
+    return;
+  }
+
+  if (!CONTRACT_ADDRESS) {
+    txtEl.textContent = 'Contract deploying soon';
+    setTimeout(() => { txtEl.textContent = 'Mint Your Frame'; }, 2500);
+    return;
+  }
+
+  try {
+    // Check 1-per-wallet
+    const balance = await contract.balanceOf(userAddress);
+    if (balance > 0n) {
+      alert('You already hold a Frame. One per wallet.');
+      return;
+    }
+
+    btnEl.disabled    = true;
+    txtEl.textContent = 'Confirm in wallet…';
+
+    const tx = await contract.mint({ value: ethers.parseEther(MINT_PRICE_ETH) });
+    txtEl.textContent = 'Minting…';
+    await tx.wait();
+
+    txtEl.textContent = 'You are a Rider.';
+
+    // Update supply from chain
+    const supply = await contract.totalSupply();
+    mintedSet.clear();
+    for (let i = 1; i <= Number(supply); i++) mintedSet.add(i);
+    updateCounters();
+
+  } catch (e) {
+    console.error('Mint error:', e);
+    txtEl.textContent = e.code === 'ACTION_REJECTED' ? 'Cancelled' : 'Error — try again';
+    setTimeout(() => { txtEl.textContent = 'Mint Your Frame'; btnEl.disabled = false; }, 3000);
+  }
+}
+
+// Main mint button
+const mainBtn = document.getElementById('main-mint-btn');
+const mainTxt = document.getElementById('main-mint-txt');
+mainBtn.addEventListener('click', () => mintFrame(mainBtn, mainTxt));
+
+// Lightbox mint button
+const lbBtn = document.getElementById('lb-mint-btn');
+const lbTxt = lbBtn.querySelector('span') || lbBtn;
+lbBtn.addEventListener('click', () => mintFrame(lbBtn, lbBtn));
+</script>
+
 </body>
 </html>
