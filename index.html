@@ -1061,17 +1061,9 @@ function makeCell(i) {
     + (isMinted ? ' minted' : '');
 
   const img = document.createElement('img');
-  img.src         = isHans ? FRAME_URLS[1] : FRAME_URLS[i];
-  img.alt         = isHans ? 'Frame 000 — Hans' : `Frame ${pad(i)}`;
-  img.loading     = 'lazy';
-  img.crossOrigin = 'anonymous';
-  img.onerror     = function() {
-    // If ardrive.net fails, try arweave.net directly
-    const arweaveTx = this.src.replace('https://ardrive.net/', 'https://arweave.net/');
-    if (!this.src.includes('arweave.net')) {
-      this.src = arweaveTx;
-    }
-  };
+  img.src     = isHans ? FRAME_URLS[1] : FRAME_URLS[i];
+  img.alt     = isHans ? 'Frame 000 — Hans' : `Frame ${pad(i)}`;
+  img.loading = 'lazy';
 
   const info = document.createElement('div');
   info.className = 'frame-info';
@@ -1118,12 +1110,7 @@ const lbImg    = document.getElementById('lb-img');
 const lbFrame  = document.getElementById('lb-frame');
 
 function openLightbox(i) {
-  lbImg.src         = FRAME_URLS[i];
-  lbImg.crossOrigin = 'anonymous';
-  lbImg.onerror     = function() {
-    const arweaveTx = this.src.replace('https://ardrive.net/', 'https://arweave.net/');
-    if (!this.src.includes('arweave.net')) this.src = arweaveTx;
-  };
+  lbImg.src = FRAME_URLS[i];
   lbFrame.textContent    = `Frame ${pad(i)}`;
   lightbox.classList.add('open');
   document.body.style.overflow = 'hidden';
