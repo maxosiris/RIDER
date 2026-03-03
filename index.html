@@ -1045,7 +1045,7 @@ const FRAME_URLS = {
 
 const ABI = [
   'function mint() payable',
-  'function totalSupply() view returns (uint256)',
+  'function totalMinted() view returns (uint256)',
   'function balanceOf(address owner) view returns (uint256)'
 ];
 
@@ -1155,7 +1155,7 @@ async function connectWallet() {
 
     if (CONTRACT_ADDRESS) {
       contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
-      const supply = await contract.totalSupply();
+      const supply = await contract.totalMinted();
       mintedSet.clear();
       for (let i = 1; i <= Number(supply); i++) mintedSet.add(i);
       updateCounters();
@@ -1201,7 +1201,7 @@ async function mintFrame(btnEl, txtEl) {
     txtEl.textContent = 'You are a Rider.';
 
     // Update supply from chain
-    const supply = await contract.totalSupply();
+    const supply = await contract.totalMinted();
     mintedSet.clear();
     for (let i = 1; i <= Number(supply); i++) mintedSet.add(i);
     updateCounters();
